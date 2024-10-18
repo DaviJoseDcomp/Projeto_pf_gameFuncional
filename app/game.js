@@ -75,8 +75,7 @@ const moverEstudante = () => {
 //************************************************************************************************************ */
                                         //VERIFICAR SE REALMENTE ESTA EM FUNCIONAL *** MOSTRAR A KALIL
 
-                                        
-
+// MODIFICAR VELOCIDADE DO TIRO E CHECAR SE ESTA FUNCIONAL E NAO INTEREFERE NOS OUTROS COMANDOS E MUDAR NOMES SE NECESSÁRIO                                     
 
 const tiroLivros = (posicaoLeftLivro, posicaoTopLivro) => {                 
     const livro = document.createElement("div");
@@ -87,32 +86,53 @@ const tiroLivros = (posicaoLeftLivro, posicaoTopLivro) => {
     livro.style.background = "red";
     livro.style.left = posicaoLeftLivro + "px";
     livro.style.top = posicaoTopLivro + "px";
-    cenario.appendChild(livro)
-
-}
-
-
-
-//funcao que esta chamando tiro livros
-
-const atirar = () => {
-    if(estaAtirando){
-        tiroLivros(posicaoHorizontal + 45, posicaoVertical -10);  //O 45 É PRO TIRO FICA NA FRENTE DO BONECO
+    cenario.appendChild(livro);
+                                        
+    // Movimento do livro
+    const velocidadeY = -5;  // Velocidade vertical (vai subindo)
+                                            
+    // Função para mover o livro
+    const moverLivro = (livro, posicaoAtual) => {
+        const novaPosicao = { 
+            left: posicaoAtual.left, 
+            top: posicaoAtual.top + velocidadeY 
+        }; // Cria um novo estado de posição
+                                        
+    livro.style.left = novaPosicao.left + "px";
+    livro.style.top = novaPosicao.top + "px";
+                                        
+    // Continua o movimento enquanto o projétil está na tela
+    if (novaPosicao.top > 0) {  // Condição para manter o movimento
+        requestAnimationFrame(() => moverLivro(livro, novaPosicao));
+    } else {
+        // Remove o livro quando sai da tela
+        livro.remove();
     }
-}
-
-document.addEventListener("keydown", (tecla) => {
-    if(tecla.key === " "){
-        estaAtirando = true;
-    }
+    };
+                                        
+    // Iniciar o movimento
+    moverLivro(livro, { left: posicaoLeftLivro, top: posicaoTopLivro });
+    };
+                                        
+    // Função que chama tiroLivros
+    const atirar = () => {
+        if (estaAtirando) {
+            tiroLivros(posicaoHorizontal + 45, posicaoVertical - 10);  // O 45 É PRO TIRO FICAR NA FRENTE DO BONECO
+        }
+    };
+                                        
+    document.addEventListener("keydown", (tecla) => {
+        if (tecla.key === " ") {
+            estaAtirando = true;
+        }
+    });
+                                        
+    document.addEventListener("keyup", (tecla) => {
+        if (tecla.key === " ") {
+            estaAtirando = false;
+        }
 });
-
-document.addEventListener("keyup", (tecla) => {
-    if(tecla.key === " "){
-        estaAtirando = false;
-    }
-});
-//                          PROXIMO PASSO É FAZER O TIRO SE DESLOCAR 
+// NECESSÁRIO MUDAR CODIGO DE MOVIMENTO. AO ATIRAR, NAO PERMITE SE MOVER EM DUAS DIREÇOES AO MESMO TEMPO                                        
 
 // Função para iniciar o jogo
 const iniciarJogo = () => {
